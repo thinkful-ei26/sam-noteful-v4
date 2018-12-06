@@ -8,27 +8,54 @@ const Note = require('../models/note');
 mongoose.connect(MONGODB_URI)
   .then(() => {
 
+
+
+    note post 
+const new note 
+
+
+
+    if (!mongoose.Types.ObjectId.isValid(newNote.folderIdd)) {
+      const err = new Error('The `id` is not valid');
+      err.status = 400;
+      return next(err);
+    }
+
+    return Folder.countDocuments({
+      userid: req.userid,
+      _id: newNote.folerId
+    })
+.then(count => {
+  console.log(count);
+  if (count) {
+    return Note.create(newNote);
+  }else {
+    return Promise.reject({message: 'folderId not Valid'});
+  }
+})
+
+
     /**
      * Find/Search for notes using Note.find
      */
-    const searchTerm = 'gaga';
-    let filter = {};
+    // const searchTerm = 'gaga';
+    // let filter = {};
 
-    if (searchTerm) {
+    // if (searchTerm) {
       // Using the `$regex` operator (case-sensitive by default)
-      filter.title = { $regex: searchTerm };
+      // filter.title = { $regex: searchTerm };
 
       // Using the `$regex` operator with case-insensitive `i` option
       // filter.title = { $regex: searchTerm, $options: 'i' };
 
       // Alternative using regex `/pattern/i` but not recommended
       // filter.title = /ways/i;
-    }
+    // }
 
-    return Note.find(filter).sort({ updatedAt: 'desc' })
-      .then(results => {
-        console.log(results);
-      });
+    // return Note.find(filter).sort({ updatedAt: 'desc' })
+    //   .then(results => {
+    //     console.log(results);
+    //   });
 
     /**
      * Find note by id using Note.findById
