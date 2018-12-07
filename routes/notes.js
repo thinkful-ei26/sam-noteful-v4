@@ -74,24 +74,29 @@ router.get('/:id', (req, res, next) => {
 
 
 
-function validateFolderId(folderId, userId) {
+const validateFolderId = function(folderId, userId) {
   if (folderId === undefined) {
     return Promise.resolve();
   }
-  if (!mongoose.Types.ObjectId.isValid(folderId)) {
+  if (folderId === ' ') {
+    const err = new Error('The `folderId` is not valid');
+    err.status = 400;
+    return Promise.reject(err);
+  }
+  if (folderId && !mongoose.Types.ObjectId.isValid(folderId)) {
     const err = new Error('The `folderId` is not valid');
     err.status = 400;
     return Promise.reject(err);
   }
   return Folder.countDocuments({ _id: folderId, userId })
     .then(count => {
-      if (count === 0) {
-        const err = new Error('The `folderId` is not valid');
+      if (count === 0 && folderId) {
+        const err = new Error('The `folderId` is not yours');
         err.status = 400;
         return Promise.reject(err);
       }
     });
-}
+};
 
 function validateTagIds(tags, userId) {
   if (tags === undefined) {
@@ -108,9 +113,15 @@ function validateTagIds(tags, userId) {
     err.status = 400;
     return Promise.reject(err);
   }
-  return Tag.find({ $and: [{ _id: { $in: tags }, userId }] })
+  return Tag.find({ 
+    $and: 
+    [{
+      _id: { $in: tags }, 
+      userId 
+    }] 
+  })
     .then(results => {
-      if (tags.length !== results.length) {
+      if (tags.length > results.length) {
         const err = new Error('The `tags` array contains an invalid `id`');
         err.status = 400;
         return Promise.reject(err);

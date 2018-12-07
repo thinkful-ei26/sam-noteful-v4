@@ -7,7 +7,7 @@ const User = require('../models/user');
 const router = express.Router();
 
 router.post('/', (req, res, next) => {
-  
+  let {username, password, fullname} = req.body;
 
   const requiredFields = ['username', 'password'];
   const missingField = requiredFields.find(field => !(field in req.body));
@@ -17,6 +17,8 @@ router.post('/', (req, res, next) => {
     return next(err);
   }
 
+ 
+
   const strFields = ['fullname', 'username', 'password'];
   const noStrField = strFields.find(result => result in req.body && typeof req.body[result] !== 'string');
   if (noStrField) {
@@ -24,6 +26,10 @@ router.post('/', (req, res, next) => {
     err.status = 422;
     return next(err);
   }
+
+  
+
+
 
   const whiteSpace = ['username', 'password'];
   const doesItHaveWS = whiteSpace.find(result => req.body[result].trim() !== req.body[result]);
@@ -51,9 +57,12 @@ router.post('/', (req, res, next) => {
     return next(err);
   }
 
+  
+  if (fullname) {
+    fullname = fullname.trim();
+  }
 
-
-  let {username, password, fullname} = req.body;
+  
 
   return User.hashPassword(password)
     .then(digest => {
