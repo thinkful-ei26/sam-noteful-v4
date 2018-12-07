@@ -26,6 +26,7 @@ describe('Noteful API - Users', function () {
   const passwordd = 'examplePass   ';
   const usernamee = null;
   const passworde = null;
+  const usernamef = 'msgreen';
   const bigasspass = 'qwertyuiojdhlkjsahdflkjasdhflkjashdlfkjashdlkfjahslkdjfhalksjdfhlkasjdfhlkasjdhflkajsdhflkajsdhflkjasdhflkjahsdlfkjahlsdkjfhalskdjfhlaksjdfhlkasjdfhlaksjdfhlkasjdfhlkasjdfhlkasjdfhlkajsdfhlkajsdhflkajsdhflkjasdhfkljasdhflkajsdhflkajsdfhlkajsdfhlaksjdfhlaksjdfhaslkjdfhaslkdjfhaslkdjf';
 
   before(function () {
@@ -86,7 +87,7 @@ describe('Noteful API - Users', function () {
           expect(res).to.have.status(422);
         });
     });
-    
+
     it('Should reject users with missing password', function () {
       let res;
       return chai.request(app)
@@ -175,17 +176,17 @@ describe('Noteful API - Users', function () {
     });
     it('Should reject users with duplicate username', function () {
       return User.create({
-        username,
+        username: 'msgreen',
         password,
       })
         .then(() => {
-          let res = {username: 'msgreen'};
+        //   let res = {username: 'msgreen'};
           return chai.request(app)
             .post('/api/users')
-            .send({username, password, fullname})
+            .send({username: 'msgreen', password, fullname})
             .then(result => {
-              res = result;
-              expect(res).to.have.status(400);
+            //   res = result;
+              expect(result).to.have.status(400);
             });
         });
     });
